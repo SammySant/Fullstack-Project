@@ -8,12 +8,12 @@ import { ProdutoService } from './produto.service.js';
 export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) {}
 
-  @Post('adicionar')
+  @Post()
   create(@Body() createProdutoDto: CreateProdutoDto) {
     return this.produtoService.create(createProdutoDto);
   }
 
-  @Get('/')
+  @Get()
   findAll() {
     return this.produtoService.findAll();
   }
