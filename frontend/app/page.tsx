@@ -28,11 +28,29 @@ export default function Home() {
     await obterProdutos();
   }
 
+  async function alterarProduto() {
+    await fetch(`http://localhost:3001/produtos/${produto.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(produto)
+    });
+    setProduto({})
+    await obterProdutos();
+  }
+
   async function deletarProduto(id: number) {
     await fetch(`http://localhost:3001/produtos/${id}`, {
       method: "DELETE"
     });
     await obterProdutos();
+  }
+
+  async function obterProdutoById(id: number) {
+    const response = await fetch(`http://localhost:3001/produtos/${id}`);
+    const produto = await response.json();
+    setProduto(produto);
   }
 
   function renderizarProdutos() {
@@ -43,6 +61,13 @@ export default function Home() {
             <div className="flex-1">{produto.nome}</div>
             <div>{produto.descricao}</div>
             <div>Preço: R$ {produto.preco}</div>
+            <div>
+              <button className="bg-green-500 rounded-md pd-2 px-3 text-white"
+                onClick={() => obterProdutoById(produto.id)}
+              >
+                Alterar
+              </button>
+            </div>
             <div>
               <button className="bg-red-500 rounded-md pd-2 px-3 text-white"
                 onClick={() => deletarProduto(produto.id)}
@@ -82,19 +107,29 @@ export default function Home() {
           <input type="number"
             id="preco"
             value={produto.preco ?? ''}
-            onChange={(e) => setProduto({ ...produto, preco: parseFloat(e.target.value) })}
+            onChange={(e) => setProduto({ ...produto, preco: +e.target.value })}
             className="bg-zinc-700 rounded-md p-2"
           />
         </div>
         <div>
-          <button
-            className=" bg-blue-500 rounded-md py-2 px-4 text-white"
-            onClick={criarProduto}
-          >
-            Criar
-          </button>
+          {produto.id ? (
+            <button
+              className=" bg-blue-500 rounded-md py-2 px-4 text-white"
+              onClick={() => alterarProduto()}
+            >
+              Alterar
+            </button>
+          ) : (
+            <button
+              className=" bg-blue-500 rounded-md py-2 px-4 text-white"
+              onClick={criarProduto}
+            >
+              Criar
+            </button>
+          )}
         </div>
       </div>
+
     )
   }
 
